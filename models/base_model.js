@@ -1,6 +1,7 @@
 /* eslint-disable */
 import mongoose from 'mongoose';
-import db from '../utils/db.js';
+import dbClient from '../utils/db.js';
+import makeRqst from './makeRqst.js';
 const { Schema } = mongoose;
 
 export default class BaseModel {
@@ -81,4 +82,5 @@ export default class BaseModel {
         })
         return returnValue;
     }
+    
 }

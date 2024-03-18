@@ -1,6 +1,6 @@
 /* eslint-disable */
 import BaseModel from "./base_model.js";
-import db from "../utils/db.js";
+import dbClient from "../utils/db.js";
 import mongoose from "mongoose";
 
 
@@ -23,6 +23,8 @@ export default class Students extends BaseModel {
             }
         }
         let newSchema = super.getSchema();
+
+        //database schema for student
         newSchema.add({
             dept: {
                 type: String,
@@ -33,6 +35,7 @@ export default class Students extends BaseModel {
                 required: true
             },
             courses: [{
+                instructor: String,
                 name: String,
                 credit: Number,
                 grade: String,
@@ -42,19 +45,14 @@ export default class Students extends BaseModel {
                 type: String,
                 required: true
             },
+            registered: {
+                type: Boolean,
+                default: false
+            },
             requests: [{
-                title: String,
-                body: String,
-                issueDate: {
-                    type: Date,
-                    default: Date.now
-                },
-                response: {
-                    message: String,
-                    responseDate: {
-                        type: Date,
-                        default: Date.now
-                    }
+                requestId: {
+                    type: mongoose.ObjectId,
+                    ref: 'requests'
                 }
             }],
             responses: [{
@@ -67,34 +65,72 @@ export default class Students extends BaseModel {
             }],
             drop_out: {
                 type: Boolean,
+                data: [{
+                    dropped_sems: String,
+                    return_sems: String,
+                    dropped_date: {
+                        type: Date,
+                        default: Date.now
+                    }
+                }],
                 default: false
             },
             dropped_courses: [{
                 name: String,
                 credit: Number,
-                reason: String                
+                reason: String,
+                grade: {
+                    type: String,
+                    default: 'F'
+                }               
             }],
             add_courses: [{
                 name: String,
                 credit: Number,
             }]
         });
+
         this.schema = newSchema;
         this.model = Object.assign({}, this.model, obj);
         const Model = mongoose.model('students', this.schema);
         this.studentModel = new Model(this.model);
     }
 
-    save() {
-        super.save(this.studentModel);
+    async addCourse(obj, doc) {
+        console.log(0)
+        if (!(typeof doc === 'object') || !(typeof obj === 'object')) {
+            new Error('must be type object');
+        }
+        const allowedArgs = ['instructor', 'name', 'credit', 'grade', 'attendance'];
+        for (const key of Object.keys(doc)) {
+            if (!allowedArgs.includes(key)) {
+                delete doc[key]
+            }
+        }
+        let docToAdd = {courses: doc};
+        obj._id = mongoose.Types.ObjectId.createFromHexString(obj._id)
+        console.log(await dbClient.updateDocList(obj, docToAdd, 'students'));
     }
-}
 
-// const obj = {
-//     dept: 'Electrical',
-//     batch: '2015 Graduate',
-//     StudentID: 'ETS0136/12'
-// }
-// const b = new Students("Besufikad", "07yilmabese@gmail.com", "paswrod", 23, 0, 'student', obj);
-// b.save();
-// console.log(b);
+     save(model) {
+        if (!(model instanceof mongoose.Model)) {
+            return new Error('model is not Mongoose type')
+        }
+        let returnValue = false;
+        model.save()
+        .then((_savedData) => {
+            console.log(`data saved`);
+            returnValue = true;
+        })
+        .catch((err) => {
+            console.log(`error saving data ${err}`);
+        })
+        return returnValue;
+    }
+
+    async reg_unreg(filter, isReg, coll) {
+        let result = await dbClient.updateDoc(filter, {registered: isReg}, coll);
+        return result;
+    }
+
+}

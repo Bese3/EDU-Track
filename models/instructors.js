@@ -1,6 +1,6 @@
 /* eslint-disable */
 import BaseModel from "./base_model.js";
-import db from "../utils/db.js";
+import dbClient from "../utils/db.js";
 import mongoose from "mongoose";
 
 export default class Instructors extends BaseModel {
@@ -14,6 +14,7 @@ export default class Instructors extends BaseModel {
                             'TeacherID', 'requests',
                             'responses', 'assigned_students',
                         ];
+
         // ensures allowed properties only added to mods
         for (const key of Object.keys(obj)) {
             if (!allowedObj.includes(key)) {
@@ -36,18 +37,9 @@ export default class Instructors extends BaseModel {
                 no_class: Number
             }],
             requests: [{
-                title: String,
-                body: String,
-                issueDate: {
-                    type: Date,
-                    default: Date.now
-                },
-                response: {
-                    message: String,
-                    responseDate: {
-                        type: Date,
-                        default: Date.now
-                    }
+                requestId: {
+                    type: mongoose.ObjectId,
+                    ref: 'requests'
                 }
             }],
             responses: [{
