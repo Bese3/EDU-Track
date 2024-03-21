@@ -18,6 +18,16 @@ class DBStorage {
 
     }
 
+    isAlive() {
+        return new Promise((resolve, reject) => {
+            if (this.client.readyState === 1) {
+                resolve(true); // MongoDB connection is alive
+            } else {
+                reject(false); // MongoDB connection is not alive
+            }
+        });
+    }
+
     async all(coll) {
         if (coll === null) {
             return new Error('collection must be string and in available collections');
@@ -32,15 +42,16 @@ class DBStorage {
         return result;
     }
 
-    async findBy(obj, coll) {
+    async findBy(obj, coll, schema) {
         if (coll === null) {
             return new Error('collection must be string and in available collections');
         }
         let result = [];
-        await this.client.collection(coll).find(obj)
+        // console.log(this.client.collection.find)
+        await this.client.model(coll).find(obj)
         .then(async (res) => {
             res = await res.toArray();
-            result = [...res];
+            result = res;
         })
         return result;
     }
@@ -55,16 +66,6 @@ class DBStorage {
             // res = await res.toArray();
             result = [...res];
         })
-        return result;
-    }
-
-    async updateDocList(obj, upDoc, coll) {
-        if (typeof obj != 'object'){
-            return new Error('document must be an object');
-          }
-        let result = [];
-        // console.log(obj)
-        result = await this.client.collection(coll).findOneAndUpdate(obj, {$push: upDoc}, { returnDocument: 'after' })
         return result;
     }
 

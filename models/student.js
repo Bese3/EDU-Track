@@ -2,17 +2,18 @@
 import BaseModel from "./base_model.js";
 import dbClient from "../utils/db.js";
 import mongoose from "mongoose";
+import pwdHash from "../utils/pwd.js";
 
 
 export default class Students extends BaseModel {
-    constructor(name, email, password, age, phone, type, obj={}) {
-        super(name, email, password, age, phone, type);
+    constructor(obj={}) {
+        super(obj);
         if (typeof obj != 'object') {
             new Error('obj must be an object')
         }
-
-        const allowedObj = ['dept', 'batch', 'courses',
-                            'StudentID',
+        const allowedObj = ['name', 'email', 'password',
+                            'age', 'phone', 'type', 'dept',
+                            'batch', 'courses', 'StudentID',
                             'requests', 'drop_out',
                             'dropped_courses', 'add_courses',
                         ];
@@ -38,7 +39,10 @@ export default class Students extends BaseModel {
                 instructor: String,
                 name: String,
                 credit: Number,
-                grade: String,
+                grade: {
+                    type: String,
+                    default: "-"
+                },
                 attendance: Number
             }],
             StudentID: {
@@ -89,48 +93,60 @@ export default class Students extends BaseModel {
                 credit: Number,
             }]
         });
-
+       
         this.schema = newSchema;
         this.model = Object.assign({}, this.model, obj);
-        const Model = mongoose.model('students', this.schema);
-        this.studentModel = new Model(this.model);
+        const Model = mongoose.models.students || mongoose.model('students', this.schema);
+        this.studentModel = new Model(this.model); 
     }
 
-    async addCourse(obj, doc) {
-        console.log(0)
-        if (!(typeof doc === 'object') || !(typeof obj === 'object')) {
-            new Error('must be type object');
+    async findBy(obj, coll) {
+        if (coll === null) {
+            return new Error('collection must be string and in available collections');
         }
-        const allowedArgs = ['instructor', 'name', 'credit', 'grade', 'attendance'];
-        for (const key of Object.keys(doc)) {
-            if (!allowedArgs.includes(key)) {
-                delete doc[key]
-            }
-        }
-        let docToAdd = {courses: doc};
-        obj._id = mongoose.Types.ObjectId.createFromHexString(obj._id)
-        console.log(await dbClient.updateDocList(obj, docToAdd, 'students'));
+        let result = [];
+        await this.studentModel.model(coll).find(obj)
+        .then(async (res) => {
+            // res = await res.toArray();
+            result = res;
+        })
+        return result;
     }
 
-     save(model) {
+    async updateDoc(doc, upDoc, coll) {
+        if (coll === null) {
+            return new Error('collection must be string and in available collections');
+        }
+        let result;
+        result = await this.studentModel.model(coll).findOneAndUpdate(doc, upDoc, { returnDocument: 'after'});
+        return result;
+    }
+
+    async updateDocList(obj, upDoc, coll) {
+        if (typeof obj != 'object'){
+            return new Error('document must be an object');
+          }
+        let result = [];
+        // console.log(obj)
+        result = await this.studentModel.model(coll).findOneAndUpdate(obj, {$push: upDoc}, { returnDocument: 'after' })
+        return result;
+    }
+
+
+    async save(model) {
         if (!(model instanceof mongoose.Model)) {
             return new Error('model is not Mongoose type')
         }
         let returnValue = false;
-        model.save()
+        await model.save()
         .then((_savedData) => {
-            console.log(`data saved`);
+            // console.log(_savedData)
             returnValue = true;
         })
         .catch((err) => {
             console.log(`error saving data ${err}`);
         })
         return returnValue;
-    }
-
-    async reg_unreg(filter, isReg, coll) {
-        let result = await dbClient.updateDoc(filter, {registered: isReg}, coll);
-        return result;
     }
 
 }

@@ -5,13 +5,13 @@ const { Schema } = mongoose;
 
 export default class makeRqst {
 
-    constructor (reqst, user) {
+    constructor (reqst) {
 
         if (typeof reqst != 'object') {
             new Error('request must be object');
         }
 
-        const allowedRqst = ['title', 'body', 'issueDate', 'response'];
+        const allowedRqst = ['title', 'body', 'issueDate', 'to', 'response'];
         for (const key of Object.keys(reqst.requests)) {
             if(!allowedRqst.includes(key)) {
                 delete reqst[key];
@@ -22,11 +22,15 @@ export default class makeRqst {
             requests: {
                 title: {
                     type: String,
-                    default: null
+                    required: true
                 },
                 body: {
                     type: String,
-                    default: null
+                    required: true
+                },
+                info: {
+                    sender: mongoose.ObjectId,
+                    reciever: mongoose.ObjectId,
                 },
                 issueDate: {
                     type: Date,
@@ -44,26 +48,21 @@ export default class makeRqst {
                 },
             }
         });
-        const Model = mongoose.model('requests', this.schema);
+        const Model = mongoose.models.requests || mongoose.model('requests', this.schema);
         this.reqModel = new Model(this.model);
-        this.user = user;
     }
 
-    async chechUsers() {
-        let id = mongoose.Types.ObjectId.createFromHexString(this.user.id)
-        let users = await dbClient.findBy({'_id': id}, this.user.coll);
-        // console.log(users)
-        if (users.length === 0) {
-            return new Error('no users found');
-        }
-        return true;
-    }
 
     async save() {
         if (!(this.reqModel instanceof mongoose.Model)) {
             return new Error('model is not Mongoose type')
         }
-        return await this.reqModel.save()
+        let result;
+        await this.reqModel.save()
+        .then((data) => {
+            result = data;
+        });
+        return result;
     }
 
     async makeRequest() {

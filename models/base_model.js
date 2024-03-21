@@ -1,19 +1,17 @@
 /* eslint-disable */
 import mongoose from 'mongoose';
-import dbClient from '../utils/db.js';
-import makeRqst from './makeRqst.js';
 const { Schema } = mongoose;
 
 export default class BaseModel {
-    constructor (name, email, password, age, phone, type) {
+    constructor (obj={}) {
         // console.log(kwargs)
 
-        if (typeof name != "string") new Error('name not string');
-        if (typeof email != "string")  new Error('email not string');
-        if (typeof password != "string") new Error('password not string');
-        if (typeof age != "number")  new Error('age not number');
-        if (typeof phone != "number") new Error('phone not number');
-        if (typeof type != "string") new Error('type not string');
+        // if (typeof name != "string") new Error('name not string');
+        // if (typeof email != "string")  new Error('email not string');
+        // if (typeof password != "string") new Error('password not string');
+        // if (typeof age != "number")  new Error('age not number');
+        // if (typeof phone != "number") new Error('phone not number');
+        // if (typeof type != "string") new Error('type not string');
 
         this._schema = new Schema({
             name: {
@@ -43,12 +41,12 @@ export default class BaseModel {
         }, { timestamps: true });
 
         this.model = {
-            name,
-            email,
-            password,
-            age,
-            phone,
-            type
+            name: obj.name,
+            email: obj.email,
+            password: obj.password,
+            age: obj.age,
+            phone: obj.phone,
+            type: obj.type
         }
         
     }

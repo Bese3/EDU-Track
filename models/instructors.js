@@ -4,13 +4,15 @@ import dbClient from "../utils/db.js";
 import mongoose from "mongoose";
 
 export default class Instructors extends BaseModel {
-    constructor(name, email, password, age, phone, type, obj={}) {
-        super(name, email, password, age, phone, type);
+    constructor(obj={}) {
+        super(obj);
 
         if (typeof obj != 'object') {
             new Error('obj must be an object')
         }
-        const allowedObj = ['dept', 'qualification', 'courses_assigned',
+        const allowedObj = ['name', 'email', 'password',
+                            'age', 'phone', 'type', 'dept',
+                            'qualification', 'courses_assigned',
                             'TeacherID', 'requests',
                             'responses', 'assigned_students',
                         ];
@@ -67,5 +69,17 @@ export default class Instructors extends BaseModel {
 
     save() {
         super.save(this.instructorsModel);
+    }
+
+    async findBy(obj, coll) {
+        if (coll === null) {
+            return new Error('collection must be string and in available collections');
+        }
+        let result = [];
+        await this.instructorsModel.model(coll).find(obj)
+        .then(async (res) => {
+            result = res;
+        })
+        return result;
     }
 }
