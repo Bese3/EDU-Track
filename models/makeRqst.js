@@ -65,23 +65,14 @@ export default class makeRqst {
         return result;
     }
 
-    async makeRequest() {
-        this.chechUsers();
-        let id = mongoose.Types.ObjectId.createFromHexString(this.user.id)
-        await this.save()
-        .then(async (savedData) => {
-            let requestId = (savedData._id)
-            const update = {requests: {requestId}}
-            await dbClient.updateDocList({'_id': id}, update, this.user.coll)
-        })
-    }
-
-    async deleteReq(model) {
-        let reqId = mongoose.Types.ObjectId.createFromHexString(model.id)
-        await dbClient.deleteDoc({'_id': reqId}, 'requests');
-        let id = mongoose.Types.ObjectId.createFromHexString(this.user.id);
-        const update = {requests: {'requestId': reqId}}
-        await dbClient.deleteDocList({'_id': id}, update, this.user.coll);
+    async updateDocList(obj, upDoc, coll) {
+        if (typeof obj != 'object'){
+            return new Error('document must be an object');
+          }
+        let result = [];
+        // console.log(obj)
+        result = await this.reqModel.model(coll).findOneAndUpdate(obj, {$push: upDoc}, { returnDocument: 'after' })
+        return result;
     }
 
     

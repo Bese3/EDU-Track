@@ -44,12 +44,19 @@ export default class Instructors extends BaseModel {
                     ref: 'requests'
                 }
             }],
+            recieved: [{
+                id: mongoose.ObjectId,
+                sender: mongoose.ObjectId
+            }],
             responses: [{
-                to: String,
+                info: {
+                    id: mongoose.ObjectId,
+                    sender: mongoose.ObjectId
+                },
                 body: String,
-                resposneDate: {
+                responseDate: {
                     type: Date,
-                    default: true
+                    default: Date.now
                 }
             }],
             assigned_students: [{
@@ -80,6 +87,16 @@ export default class Instructors extends BaseModel {
         .then(async (res) => {
             result = res;
         })
+        return result;
+    }
+
+    async updateDocList(obj, upDoc, coll) {
+        if (typeof obj != 'object'){
+            return new Error('document must be an object');
+          }
+        let result = [];
+        // console.log(obj)
+        result = await this.instructorsModel.model(coll).findOneAndUpdate(obj, {$push: upDoc}, { returnDocument: 'after' })
         return result;
     }
 }

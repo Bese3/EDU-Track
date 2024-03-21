@@ -59,12 +59,19 @@ export default class Students extends BaseModel {
                     ref: 'requests'
                 }
             }],
+            recieved: [{
+                id: mongoose.ObjectId,
+                sender: mongoose.ObjectId
+            }],
             responses: [{
-                to: String,
+                info: {
+                    id: mongoose.ObjectId,
+                    sender: mongoose.ObjectId
+                },
                 body: String,
-                resposneDate: {
+                responseDate: {
                     type: Date,
-                    default: true
+                    default: Date.now
                 }
             }],
             drop_out: {

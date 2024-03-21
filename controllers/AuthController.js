@@ -4,11 +4,13 @@ import jwt from "jsonwebtoken";
 import Admins from "../models/admin.js";
 import Instructors from "../models/instructors.js";
 import Students from "../models/student.js";
+import makeRqst from "../models/makeRqst.js";
 
 let testemail = 'email'
 let admin = new Admins({testemail});
 let instructor = new Instructors({testemail});
 let student = new Students({testemail});
+let reqst = new makeRqst({requests: testemail});
 
 
 export default class AuthController {
@@ -19,6 +21,11 @@ export default class AuthController {
     static instmodel() {
         return instructor
     }
+
+    static reqmodel() {
+        return reqst
+    }
+
     static async studGetConnect (req, res, next) {
         if (!req.headers['authorization']) {
             return res.status(401).json({'error': 'Unauthorized'});

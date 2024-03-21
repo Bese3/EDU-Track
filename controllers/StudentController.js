@@ -1,10 +1,15 @@
 /* eslint-disable */
-import dbClient from "../utils/db.js";
 import Students from "../models/student.js";
 import AuthController from "./AuthController.js";
 import pwdHash from "../utils/pwd.js";
 import makeRqst from "../models/makeRqst.js";
 import mongoose from "mongoose";
+import Bull from 'bull';
+import { response } from "express";
+
+const REDIS_URL = process.env.REDIS_URL || "redis://127.0.0.1:6379";
+const requestQueue = new Bull('studrequestQueue', REDIS_URL);
+const responseQueue = new Bull('studresponseQueue', REDIS_URL);
 
 
 export default class StudentController {
@@ -142,7 +147,7 @@ export default class StudentController {
 
     static async makeReq(req, res) {
         if (req.payload.type != 'student') {
-            return res.status(403).json({'error': 'Admin privelage only'});
+            return res.status(403).json({'error': 'Student privelage only'});
         }
         if (!req.body.student) {
             return res.status(403).json({'error': 'Missing data'});
@@ -153,37 +158,45 @@ export default class StudentController {
         if (result.length === 0) {
             return res.status(403).json({'error': 'Student doesn\'t exist'});
         }
+        result = result[0]
+        req.body.student.info.sender = result._id.toString();
+        // student exists and continuing to create new req
         let Doc = {requests: {
             title: req.body.student.title,
             body: req.body.student.body,
             info: req.body.student.info
             }
          };
+
+        //  check reciever instructor is available in database
          let instId = mongoose.Types.ObjectId.createFromHexString(Doc.requests.info.reciever);
          result = await AuthController.instmodel().findBy({'_id': instId}, 'instructors');
          if (result.length === 0) {
             return res.status(403).json({'error': 'Instructor doesn\'t exist'});
         }
+
+        // instructor exists
         try {
+            // creating a new request based on student data
             let newReq = new makeRqst(Doc);
             result = await newReq.save();
-            let upDoc = {requests: {
-                requestId: (result._id)
-            }
-          };
-          const added = await AuthController.stumodel().updateDocList({email}, upDoc, 'students');
-          if (added)
+
+            //   create Job producer for the request
+            Doc.requests.info.id = result._id.toString();
+            console.log(result)
+            console.log(Doc.requests.info)
+            await requestQueue.add(Doc.requests.info)
+
             return res.status(200).json(result.requests);
         }
         catch (err) {
-            console.log(err)
             res.status(403).json({'error': 'Missing data in your request'});
         }
     }
 
     static async studResponse(req, res) {
         if (req.payload.type != 'student') {
-            return res.status(403).json({'error': 'Admin privelage only'});
+            return res.status(403).json({'error': 'Student privelage only'});
         }
         if (!req.body.student) {
             return res.status(403).json({'error': 'Missing data'});
@@ -194,8 +207,15 @@ export default class StudentController {
         if (result.length === 0) {
             return res.status(403).json({'error': 'Student doesn\'t exist'});
         }
-
-        let reqId = req.body.student.info.sender;
-        
+        let sender = mongoose.Types.ObjectId.createFromHexString(req.body.student.info.sender);
+        result = await AuthController.instmodel().findBy({'_id': sender}, 'instructors');
+        if (result.length === 0) {
+            return res.status(404).json({'error': 'instructor is no longer available'});
+        }
+        let body = req.body.student.body;
+        let id  = req.body.student.info.id;
+        sender = sender.toString();
+        responseQueue.add({id, body, sender, email});
+            return res.status(201).json({sent: body});
     }
 }

@@ -7,6 +7,7 @@ export default function injectRoutes(app) {
     app.get('/status', AppController.getStatus);
     app.get('/student/login', AuthController.studGetConnect);
     app.post('/student/issue', AuthController.verifyUser, StudentController.makeReq);
+    app.post('/student/resolve', AuthController.verifyUser, StudentController.studResponse);
     app.get('/instructor/login', AuthController.instGetConnect);
     app.get('/admin/login', AuthController.adminGetConnect);
     app.get('/logout', AuthController.GetDisconnect);
