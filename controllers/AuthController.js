@@ -50,7 +50,7 @@ export default class AuthController {
             result['password'] = "*****"
             res.status(200).json(result)
         } else {
-            return res.status(403).json({'error': 'Forbidden'});
+            return res.status(403).json({'error': 'Incorrect Password'});
         }
     }
 

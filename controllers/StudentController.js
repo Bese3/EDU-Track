@@ -127,18 +127,63 @@ export default class StudentController {
         if (result.length === 0) {
             return res.status(403).json({'error': 'Student doesn\'t exist'});
         }
+        let dropped;
+        for (const course of result[0].courses) {
+            if (course.name === req.body.student.name && (course.status == 'taking' || course.status == 'taken')){
+                return res.status(403).json({'error': 'Course already in Student catalog'});
+            }
+
+            if (course.name === req.body.student.name && course.status == 'dropped'){
+                dropped  = course;
+            } 
+        }
+
+        let student = result[0];
+
         // checking if instrcutor is available in db
         let name = req.body.student.instructor;
-        result = await AuthController.instmodel().findBy({name}, 'instrcutors');
+        result = await AuthController.instmodel().findBy({name}, 'instructors');
         if (result.length === 0) {
             return res.status(403).json({'error': 'instructor not found'});
         }
+        
+        // check if the course is dropped
+        if (dropped) {
+            dropped.status = 'taking'
+            result = await AuthController.stumodel().studentModel.model('students').findOneAndUpdate({email, 'droppedCourses.name': dropped.name}, {$unset: {'droppedCourses.$': ''}}, {returnDocument: 'after'});
+            let newDoc = [];
+            for (const i of result.droppedCourses) {
+                if (i != null) {
+                    newDoc.push(i)
+                }
+            }
+            // removing null values
+            await AuthController.stumodel().updateDoc({email}, {droppedCourses: newDoc}, 'students');
+
+            result = await AuthController.stumodel().studentModel.model('students').findOneAndUpdate({email, 'courses.name': dropped.name}, {$set: {'courses.$': dropped}}, {returnDocument: 'after'});
+        
+
+            dropped.status = 'taken'
+            let alreadyAdd = false;
+            for (const i of student.addCourses) {
+                if (i.name === dropped.name) {
+                    alreadyAdd = true;
+                }
+            }
+            if (!alreadyAdd)
+                await AuthController.stumodel().updateDocList({email}, {addCourses: dropped}, 'students');
+            result.password = "*****"
+            return res.status(200).json(result)
+        }
+
         const upDoc = {courses: {
                             instructor: req.body.student.instructor,
                             name: req.body.student.name,
                             credit: req.body.student.credit,
+                            semister: req.body.student.semister,
                             grade: req.body.student.grade,
-                            attendance: req.body.student.attendance
+                            attendance: req.body.student.attendance,
+                            status: 'taking'
                       }};
         result = await AuthController.stumodel().updateDocList({email}, upDoc, 'students');
         result.password = "*****"
@@ -216,6 +261,81 @@ export default class StudentController {
         let id  = req.body.student.info.id;
         sender = sender.toString();
         responseQueue.add({id, body, sender, email});
-            return res.status(201).json({sent: body});
+        return res.status(201).json({sent: body});
+    }
+
+    static async dropStudent(req, res) {
+        if (req.payload.type != 'admin') {
+            return res.status(403).json({'error': 'Student privelage only'});
+        }
+        if (!req.body.student) {
+            return res.status(403).json({'error': 'Missing data'});
+        }
+
+        let email = req.body.student.email;
+        let result = await AuthController.stumodel().findBy({email}, 'students');
+        if (result.length === 0) {
+            return res.status(403).json({'error': 'Student doesn\'t exist'});
+        }
+        const droppedSem = req.body.student.droppedSem;
+        const date = new Date();
+        const year = date.getFullYear();
+        let upDoc = await AuthController.stumodel().findBy({email}, 'students');
+        upDoc = upDoc[0]
+        let newDoc = [];
+        for (const course of upDoc.courses) {
+            if (course.semister == droppedSem && course.year == year) {
+                course.status = 'dropped'
+                newDoc.push(course)
+            }
+        }
+        await AuthController.stumodel().studentModel.model('students').findOneAndUpdate({email, 'courses.semister': droppedSem, 'courses.year': year}, {$set: {'courses.$': newDoc}}, {returnDocument: 'after'});
+        let dropDoc = []
+        for (const dropped of upDoc.droppedCourses) {
+            if (dropped != null)
+            newDoc.forEach((elem, index, array) => {
+                if (elem.name != dropped.name)
+                    dropDoc.push(array[index])
+            })
+        }
+        if (upDoc.droppedCourses.length === 0) {
+            dropDoc = newDoc[0]
+        }
+        dropDoc = {droppedCourses: dropDoc};
+        if (dropDoc != [])
+            result = await AuthController.stumodel().updateDocList({email}, dropDoc, 'students');
+
+        result.password = "*****";
+        return res.status(200).json(result)
+    }
+
+    static async gradStudent(req, res) {
+        if (req.payload.type != 'instructor') {
+            return res.status(403).json({'error': 'Student privelage only'});
+        }
+        if (!req.body.student) {
+            return res.status(403).json({'error': 'Missing data'});
+        }
+
+        let email = req.body.student.email;
+        let result = await AuthController.stumodel().findBy({email}, 'students');
+        if (result.length === 0) {
+            return res.status(403).json({'error': 'Student doesn\'t exist'});
+        }
+        result = result[0]
+        let grade = req.body.student.grade;
+        let instructor = req.body.student.instructor;
+        let name = req.body.student.name;
+        for (const course of result.courses) {
+            if (course.name == name && course.instructor == instructor && course.status == 'taking') {
+                course.grade = grade
+                result = await AuthController.stumodel().studentModel.model('students').findOneAndUpdate({email, 'courses.name': course.name}, {$set: {'courses.$': course}}, {returnDocument: 'after'});
+                result.password = "*****";
+                return res.status(200).json(result)
+            }
+        }
+
+        return res.status(404).json({'error': 'No course found'});
+
     }
 }

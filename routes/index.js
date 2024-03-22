@@ -16,4 +16,6 @@ export default function injectRoutes(app) {
     app.put('/admin/unreg/student', AuthController.verifyUser, StudentController.unRegStudent);
     app.put('/admin/department/student', AuthController.verifyUser, StudentController.chgDept);
     app.post('/admin/course/student', AuthController.verifyUser, StudentController.regCourse);
+    app.put('/admin/drop/student', AuthController.verifyUser, StudentController.dropStudent);
+    app.put('/instructor/grade/student', AuthController.verifyUser, StudentController.gradStudent);
 }

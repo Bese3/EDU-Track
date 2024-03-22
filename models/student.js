@@ -24,6 +24,8 @@ export default class Students extends BaseModel {
             }
         }
         let newSchema = super.getSchema();
+        const date = new Date();
+        const year = date.getFullYear();
 
         //database schema for student
         newSchema.add({
@@ -39,11 +41,22 @@ export default class Students extends BaseModel {
                 instructor: String,
                 name: String,
                 credit: Number,
+                year: {
+                    type: String,
+                    default: year
+                },
+                semister: Number,
                 grade: {
                     type: String,
-                    default: "-"
+                    default: "-",
+                    enum: ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D', 'F', '-']
                 },
-                attendance: Number
+                attendance: Number,
+                status: {
+                    type: String,
+                    enum: ['taken', 'taking', 'dropped'],
+                    default: 'taking'
+                }
             }],
             StudentID: {
                 type: String,
@@ -74,28 +87,42 @@ export default class Students extends BaseModel {
                     default: Date.now
                 }
             }],
-            drop_out: {
-                type: Boolean,
-                data: [{
-                    dropped_sems: String,
-                    return_sems: String,
-                    dropped_date: {
-                        type: Date,
-                        default: Date.now
-                    }
-                }],
-                default: false
-            },
-            dropped_courses: [{
+            // dropOut: {
+            //     dropped: {
+            //         type: Boolean,
+            //         default: false
+            //     },
+            //     droppedSem: Number,
+            //     returnSem: {
+            //         type: String,
+            //         default: null
+            //     },
+            //     droppedDate: {
+            //         type: Date,
+            //         default: Date.now
+            //     }
+            // },
+            droppedCourses: [{
+                instructor: String,
                 name: String,
                 credit: Number,
-                reason: String,
+                year: {
+                    type: String,
+                    default: year
+                },
+                semister: Number,
+                attendance: Number,
+                status: {
+                    type: String,
+                    enum: ['taken', 'taking', 'dropped'],
+                    default: 'taking'
+                },
                 grade: {
                     type: String,
                     default: 'F'
                 }               
             }],
-            add_courses: [{
+            addCourses: [{
                 name: String,
                 credit: Number,
             }]
