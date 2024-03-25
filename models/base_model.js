@@ -65,15 +65,15 @@ export default class BaseModel {
         return `[${this.constructor.name}] (${this._id}) {${result}}`
     }
 
-    save(model) {
+    async save(model) {
         if (!(model instanceof mongoose.Model)) {
             return new Error('model is not Mongoose type')
         }
         let returnValue = false;
-        model.save()
-        .then((_savedData) => {
+        await model.save()
+        .then((savedData) => {
             console.log(`data saved`);
-            returnValue = true;
+            returnValue = savedData;
         })
         .catch((err) => {
             console.log(`error saving data ${err}`);

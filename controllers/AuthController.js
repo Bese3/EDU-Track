@@ -62,15 +62,14 @@ export default class AuthController {
         const secKey = process.env.SECRET_KEY || "secret_key";
         jwt.verify(token, secKey, (err, dec) => {
             if (err) {
-                return res.status(403).json({'error': 'Forbidden'});
+                return res.status(403).json({'error': 'Not logged in'});
             }
         })
         // res.clearHeaders()
-        res.status(200).json({"message": `goodbye`})
-        // return res.redirect('/')
+        res.status(204).redirect('/')
     }
 
-    static async instGetConnect(req, res, next){
+    static async instGetConnect(req, res){
         if (!req.headers['authorization']) {
             return res.status(401).json({'error': 'Unauthorized'});
         }
@@ -139,7 +138,7 @@ export default class AuthController {
         const secKey = process.env.SECRET_KEY || "secret_key";
         jwt.verify(encoded, secKey, (err, payload) => {
             if (err) {
-                return res.status(403).json({'error': 'Forbidden'});
+                return res.status(403).json({'error': 'Sorry your session expired or incorrect Authentication'});
             } else {
                 // add payload data to req to rap up middleware
                 req.payload = payload;

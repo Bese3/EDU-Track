@@ -2,7 +2,6 @@
 import BaseModel from "./base_model.js";
 import dbClient from "../utils/db.js";
 import mongoose from "mongoose";
-import pwdHash from "../utils/pwd.js";
 
 
 export default class Students extends BaseModel {
@@ -166,6 +165,9 @@ export default class Students extends BaseModel {
         return result;
     }
 
+    // async save() {
+    //     return await super.save(this.instructorsModel);
+    // }
 
     async save(model) {
         if (!(model instanceof mongoose.Model)) {
@@ -174,8 +176,8 @@ export default class Students extends BaseModel {
         let returnValue = false;
         await model.save()
         .then((_savedData) => {
-            // console.log(_savedData)
-            returnValue = true;
+            // console.log(_savedData)  
+            returnValue = _savedData;
         })
         .catch((err) => {
             console.log(`error saving data ${err}`);

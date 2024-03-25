@@ -24,6 +24,8 @@ export default class Instructors extends BaseModel {
             }
         }
         let newSchema = super.getSchema();
+        const date = new Date();
+        const year = date.getFullYear();
         newSchema.add({
             dept: {
                 type: String,
@@ -33,10 +35,16 @@ export default class Instructors extends BaseModel {
                 type: String,
                 required: true
             },
-            courses_assigned: [{
+            coursesAssigned: [{
                 name: String,
-                credits: Number,
-                no_class: Number
+                credit: Number,
+                numberClass: Number,
+                year: {
+                    type: String,
+                    default: year
+                },
+                semister: Number,
+                batch: String
             }],
             requests: [{
                 requestId: {
@@ -59,23 +67,39 @@ export default class Instructors extends BaseModel {
                     default: Date.now
                 }
             }],
-            assigned_students: [{
-                dept: [{
-                    name: String,
+            assignedStudents: [{
+                    course: String,
                     credit: Number,
-                    grade: String,
-                    attendance: Number
-                }]
+                    StudentID: String,
+                    grade: {
+                        type: String,
+                        default: "-",
+                        enum: ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D', 'F', '-']
+                    },
+                    attendance: {
+                        type: Number,
+                        default: 0
+                    },
+                    batch: String,
+                    semister: Number,
+                    year: {
+                        type: String,
+                        default: year
+                    },
+                    add: {
+                        type: Boolean,
+                        default: false,
+                    }
             }]
         });
         this.schema = newSchema;
         this.model = Object.assign({}, this.model, obj);
-        const Model = mongoose.model('instructors', this.schema);
+        const Model = mongoose.models.instructors || mongoose.model('instructors', this.schema);
         this.instructorsModel = new Model(this.model);
     }
 
-    save() {
-        super.save(this.instructorsModel);
+    async save() {
+        return await super.save(this.instructorsModel);
     }
 
     async findBy(obj, coll) {
@@ -87,6 +111,16 @@ export default class Instructors extends BaseModel {
         .then(async (res) => {
             result = res;
         })
+
+        return result;
+    }
+
+    async updateDoc(doc, upDoc, coll) {
+        if (coll === null) {
+            return new Error('collection must be string and in available collections');
+        }
+        let result;
+        result = await this.instructorsModel.model(coll).findOneAndUpdate(doc, upDoc, { returnDocument: 'after'});
         return result;
     }
 
