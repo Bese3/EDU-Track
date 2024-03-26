@@ -60,13 +60,18 @@ export default class AuthController {
         }
         let token = req.headers['authorization'].split(' ')[1];
         const secKey = process.env.SECRET_KEY || "secret_key";
+        let er = false;
         jwt.verify(token, secKey, (err, dec) => {
             if (err) {
-                return res.status(403).json({'error': 'Not logged in'});
+                er = true;
             }
         })
+        if (er) {
+            return res.status(403).json({'error': 'Not logged in'});
+
+        }
         // res.clearHeaders()
-        res.status(204).redirect('/')
+        return res.status(204).json({})
     }
 
     static async instGetConnect(req, res){

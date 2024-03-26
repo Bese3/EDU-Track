@@ -393,6 +393,20 @@ export default class StudentController {
         let grade = req.body.student.grade;
         let instructor = req.body.student.instructor;
         let name = req.body.student.name;
+        let instructorEmail = req.body.student.instructorEmail;
+        let inst = await AuthController.instmodel().findBy({'email': instructorEmail}, 'instructors');
+        if (inst.length === 0) {
+            return res.status(404).json({'error': 'instructor not found'});
+        }
+        inst = inst[0];
+        for (const student of inst.assignedStudents) {
+            if (result.StudentID === student.StudentID){
+                student.grade = grade
+                await AuthController.instmodel().instructorsModel.model('instructors').findOneAndUpdate({'email': instructorEmail,
+                                        'assignedStudents.StudentID': result.StudentID}, {$set: {'assignedStudents.$': student}});
+                break;
+            }
+        }
         for (const course of result.courses) {
             if (course.name == name && course.instructor == instructor && course.status == 'taking') {
                 course.grade = grade
@@ -423,6 +437,20 @@ export default class StudentController {
         let attendance = req.body.student.attendance;
         let instructor = req.body.student.instructor;
         let name = req.body.student.name;
+        let instructorEmail = req.body.student.instructorEmail;
+        let inst = await AuthController.instmodel().findBy({'email': instructorEmail}, 'instructors');
+        if (inst.length === 0) {
+            return res.status(404).json({'error': 'instructor not found'});
+        }
+        inst = inst[0];
+        for (const student of inst.assignedStudents) {
+            if (result.StudentID === student.StudentID){
+                student.attendance = attendance
+                await AuthController.instmodel().instructorsModel.model('instructors').findOneAndUpdate({'email': instructorEmail,
+                                        'assignedStudents.StudentID': result.StudentID}, {$set: {'assignedStudents.$': student}});
+                break;
+            }
+        }
         for (const course of result.courses) {
             if (course.name == name && course.instructor == instructor && course.status == 'taking') {
                 course.attendance = attendance

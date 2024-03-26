@@ -69,7 +69,7 @@ export default class Processor {
           }
         };
         try {
-             await AuthController.stumodel().updateDocList({'email': data.email}, upDoc, 'instructos');
+             await AuthController.stumodel().updateDocList({'email': data.email}, upDoc, 'instructors');
         }
         catch(err) {
             console.log(err)
