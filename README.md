@@ -27,4 +27,8 @@ A simple Educational Organization progress tracking system API built with Expres
 + /instructor/issue - instructors also can issue a request to a student.
 + /instructor/resolve - resloving issues from students.
 + /admin/create/student - this route is protected to only admins which creates student its info.
-+ /admin/create/instructor - creates instructor with bunch on information
++ /admin/create/instructor - creates instructor with bunch on information.
++ /admin/reg/student - registers student.
++ /admin/unreg/student - unregister a student.
++ /admin/department/student - changes or updates department of a student.
++ /admin/course/student - add course to a student with neccassary information.
