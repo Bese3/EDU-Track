@@ -6,10 +6,11 @@ A simple Educational Organization progress tracking system API built with Expres
 
 ## Requirements
 + MongoDB server
++ Redis server
 + Mongoose ODM
 + JSONWebToken
 + Express.js
-+ Node.js Run time enviroment
++ Node.js Run Time Enviroment
 
 ### Applications
 
@@ -36,3 +37,18 @@ A simple Educational Organization progress tracking system API built with Expres
 + /admin/qualification/instructor - change the quaification of an instructor for instance from Masters to Doctor.
 + /instructor/grade/student - grade student based on their score.
 + /instructor/attendance/student - fill student's attendance.
+
+### Enviromental Variables
+
++ DB_PORT - database port
++ DB_HOST - database host
++ DB_DATABASE - database name
++ REDIS_URL - redis connection url
+
+### Installation
+
+After cloning this repository navigate into th root of the project and run 
+
+```
+npm install
+```
