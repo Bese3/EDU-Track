@@ -32,3 +32,7 @@ A simple Educational Organization progress tracking system API built with Expres
 + /admin/unreg/student - unregister a student.
 + /admin/department/student - changes or updates department of a student.
 + /admin/course/student - add course to a student with neccassary information.
++ /admin/drop/student - drop a course for a student.
++ /admin/qualification/instructor - change the quaification of an instructor for instance from Masters to Doctor.
++ /instructor/grade/student - grade student based on their score.
++ /instructor/attendance/student - fill student's attendance.
