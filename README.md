@@ -47,8 +47,19 @@ A simple Educational Organization progress tracking system API built with Expres
 
 ### Installation
 
-After cloning this repository navigate into th root of the project and run 
+After cloning this repository navigate into the root of the project repository and run:
 
 ```
 npm install
+```
+
+### Usage
+In order to use the API we have to run the server and also the worker for the request object to be created from instructors and students
+
+```
+npm run start-server
+```
+On different terminal
+```
+npm run start-worker
 ```
