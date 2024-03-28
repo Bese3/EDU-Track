@@ -82,4 +82,4 @@ First we login as an admin with Autherization header
 http://localhost:5000/admin/login
 Autherization: Basic dGVzdEVtYWlsOnRlc3Rwd2Q=
 ```
-![Response](https:github.com/EDU-Track/adminLoginResponse.png)
+![Response](https://github.com/Bese3/EDU-Track/blob/main/adminLoginResponse.png)
