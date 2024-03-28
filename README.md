@@ -87,7 +87,7 @@ Autherization: Basic dGVzdEVtYWlsOnRlc3Rwd2Q=
 If our credintials are right we get a set-cookie named token with a JWT payload, It is important to remember JWT of an admin expires in 30 min.
 
 Now for the purpose of showcasing we create two student and instructor
-Important fields when creating student
+### Important fields when creating student
 + name
 + email
 + password for the student
@@ -101,20 +101,45 @@ Important fields when creating student
 and it must be in student object
 
 ```
-http://localhost:5000/admin/create/student
+POST http://localhost:5000/admin/create/student
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MDU3MTZmMTAwZWU2YWU1OWIyODZhNiIsImVtYWlsIjoidGVzdEVtYWlsIiwibmFtZSI6InRlc3RBZG1pbiIsInR5cGUiOiJhZG1pbiIsImlhdCI6MTcxMTYzMzA5NCwiZXhwIjoxNzExNjM0ODk0fQ.IgeDBQ-kYI8oOMtQdgtSVlTCPPspw7votSUvDDmN2A8
 Content-Type: application/json
+
 {
-    name: 'abebe behailu',
-    email: 'abebehailu@student.com',
-    password: 'abe1234',
-    age: 18,
-    phone: '0978253416',
-    type: 'student',
-    dept: 'Software Engineering',
-    batch: '4th year b',
-    StudentID: 'ETS0123/16'
+    student:
+            {
+                name: 'abebe behailu',
+                email: 'abebehailu@student.com',
+                password: 'abe1234',
+                age: 18,
+                phone: '0978253416',
+                type: 'student',
+                dept: 'Software Engineering',
+                batch: '4th year b',
+                StudentID: 'ETS0123/16'
+            }
 }
+
+POST http://localhost:5000/admin/create/student
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MDU3MTZmMTAwZWU2YWU1OWIyODZhNiIsImVtYWlsIjoidGVzdEVtYWlsIiwibmFtZSI6InRlc3RBZG1pbiIsInR5cGUiOiJhZG1pbiIsImlhdCI6MTcxMTYzMzA5NCwiZXhwIjoxNzExNjM0ODk0fQ.IgeDBQ-kYI8oOMtQdgtSVlTCPPspw7votSUvDDmN2A8
+
+Content-Type: application/json
+
+{
+    student:
+            {
+                name:'Bereket Endale', 
+                email: 'bereketendale@student.com',
+                password: bereket1234,
+                age:18,
+                phone:0978253416,
+                type: student,
+                dept: Software Engineering,
+                batch: "4th year b",
+                StudentID: "ETS0123/16"
+            }
+}
+
 ```
 
 We get a response from database
@@ -151,7 +176,73 @@ We get a response from database
     
   ],
   "createdAt": "2024-03-28T15:02:42.878Z",
-  "updatedAt": "2024-03-28T15:02:42.878Z",
-  "__v": 0
+  "updatedAt": "2024-03-28T15:02:42.878Z"
+}...
+```
+Creating instructors
+
+### Important field for creating instructor
++ name
++ email
++ password for the student
++ age (type integer)
++ phone (stored as a string)
++ type can only be a student, admin or instructor
++ dept department of the instructor
++ qualification example Bsc, Masters
+
+and must be included in the instructor object
+
+```
+POST http://localhost:5000/admin/create/ins
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MDU3MTZmMTAwZWU2YWU1OWIyODZhNiIsImVtYWlsIjoidGVzdEVtYWlsIiwibmFtZSI6InRlc3RBZG1pbiIsInR5cGUiOiJhZG1pbiIsImlhdCI6MTcxMTYzMzA5NCwiZXhwIjoxNzExNjM0ODk0fQ.IgeDBQ-kYI8oOMtQdgtSVlTCPPspw7votSUvDDmN2A8
+
+Content-Type: application/json
+
+{
+  instructor: {
+    name: "Yonas Amsalu",
+    email: "yonas@student.com",
+    password: "yonas1234",
+    age: 32,
+    phone: "094637281234",
+    type: "instructor",
+    dept: "Software Engineering",
+    qualification: "Masters in Software Design"
+  }
+}
+
+```
+
+Response
+
+```
+{
+  "name": "Yonas Amsalu",
+  "email": "yonas@student.com",
+  "password": "*****",
+  "age": 32,
+  "phone": "094637281234",
+  "type": "instructor",
+  "_id": "66059d1c7aace7f8ce393282",
+  "dept": "Software Engineering",
+  "qualification": "Masters in Software Design",
+  "coursesAssigned": [
+    
+  ],
+  "requests": [
+    
+  ],
+  "recieved": [
+    
+  ],
+  "responses": [
+    
+  ],
+  "assignedStudents": [
+    
+  ],
+  "createdAt": "2024-03-28T16:38:52.904Z",
+  "updatedAt": "2024-03-28T16:38:52.904Z"
 }
 ```
