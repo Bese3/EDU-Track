@@ -165,10 +165,21 @@ export default class StudentController {
                     newDoc.push(i)
                 }
             }
+            dropped.status = 'taken'
+            let alreadyAdd = false;
+            for (const i of student.addCourses) {
+                if (i.name === dropped.name) {
+                    alreadyAdd = true;
+                }
+            }
+            if (!alreadyAdd)
+                await AuthController.stumodel().updateDocList({email}, {addCourses: dropped}, 'students');
+
             // removing null values
             await AuthController.stumodel().updateDoc({email}, {droppedCourses: newDoc}, 'students');
 
             result = await AuthController.stumodel().studentModel.model('students').findOneAndUpdate({email, 'courses.name': dropped.name}, {$set: {'courses.$': dropped}}, {returnDocument: 'after'});
+        }
             // coursesAssigned property for instructor
             let courseAlreadyIstructor = false;
             for (const course of inst[0].coursesAssigned) {
@@ -208,19 +219,7 @@ export default class StudentController {
             if (!studentAlreadyAssigned)
                 await AuthController.instmodel().updateDocList({'email': inst[0].email}, assignStud, 'instructors');
 
-            dropped.status = 'taken'
-            let alreadyAdd = false;
-            for (const i of student.addCourses) {
-                if (i.name === dropped.name) {
-                    alreadyAdd = true;
-                }
-            }
-            if (!alreadyAdd)
-                await AuthController.stumodel().updateDocList({email}, {addCourses: dropped}, 'students');
-            result.password = "*****"
-            return res.status(200).json(result)
-        }
-
+           
         const upDoc = {courses: {
                             instructor: req.body.student.instructor,
                             name: req.body.student.name,
@@ -230,7 +229,18 @@ export default class StudentController {
                             attendance: req.body.student.attendance,
                             status: 'taking'
                       }};
-        result = await AuthController.stumodel().updateDocList({email}, upDoc, 'students');
+        if (!dropped)
+            result = await AuthController.stumodel().updateDocList({email}, upDoc, 'students');
+        if (dropped){
+            await AuthController.stumodel().studentModel.model('students').findOneAndUpdate({email}, {$set: {'courses': []}});
+            for (const i in student.courses){
+                if (i.name == dropped.name){
+                    i.status = 'taking'
+                }
+                result = await AuthController.stumodel().updateDocList({email}, i, {returnDocument: 'after'}, 'students');
+                
+            }
+        }
         result.password = "*****"
         return res.status(200).json(result);
     }
@@ -328,7 +338,7 @@ export default class StudentController {
         upDoc = upDoc[0]
         let newDoc = [];
         for (const course of upDoc.courses) {
-            if (course.semister == droppedSem && course.year == year && course.name == courseName) {
+            if (course.semister == droppedSem && course.year == year.toString() && course.name == courseName) {
                 course.status = 'dropped'
             }
             newDoc.push(course)
@@ -341,6 +351,7 @@ export default class StudentController {
         for (const dropped of upDoc.droppedCourses) {
             alreadyDroped.push(dropped.name);
         }
+        console.log()
         if (upDoc.droppedCourses.length === 0) {
             // if the dropped course is already empty add all dropping course
                newDoc.forEach((elem) => {

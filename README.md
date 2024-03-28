@@ -177,7 +177,9 @@ We get a response from database
   ],
   "createdAt": "2024-03-28T15:02:42.878Z",
   "updatedAt": "2024-03-28T15:02:42.878Z"
-}...
+}
+...
+...
 ```
 Creating instructors
 
@@ -209,6 +211,24 @@ Content-Type: application/json
     type: "instructor",
     dept: "Software Engineering",
     qualification: "Masters in Software Design"
+  }
+}
+
+POST http://localhost:5000/admin/create/ins
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MDU3MTZmMTAwZWU2YWU1OWIyODZhNiIsImVtYWlsIjoidGVzdEVtYWlsIiwibmFtZSI6InRlc3RBZG1pbiIsInR5cGUiOiJhZG1pbiIsImlhdCI6MTcxMTYzMzA5NCwiZXhwIjoxNzExNjM0ODk0fQ.IgeDBQ-kYI8oOMtQdgtSVlTCPPspw7votSUvDDmN2A8
+
+Content-Type: application/json
+
+{
+  instructor: {
+    name: "Arebu Abdella",
+    email: "arebu@instructor.com",
+    password: " arebu1234",
+    age: 43,
+    phone: "0934215647",
+    type: "instructor",
+    dept: "Electrical & Computer Engineering",
+    qualification: "Masters in Computer Engineering"
   }
 }
 
@@ -245,4 +265,336 @@ Response
   "createdAt": "2024-03-28T16:38:52.904Z",
   "updatedAt": "2024-03-28T16:38:52.904Z"
 }
+...
+...
 ```
+
+now we can use them to create a course, add a course, drop a course, make a request to an instructor respond to an instructoran soon ...
+
+For instance to add a course to a student abebe behailu
+we must register the student
+
+```
+PUT http://localhost:5000/admin/reg/student
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MDU3MTZmMTAwZWU2YWU1OWIyODZhNiIsImVtYWlsIjoidGVzdEVtYWlsIiwibmFtZSI6InRlc3RBZG1pbiIsInR5cGUiOiJhZG1pbiIsImlhdCI6MTcxMTYzMzA5NCwiZXhwIjoxNzExNjM0ODk0fQ.IgeDBQ-kYI8oOMtQdgtSVlTCPPspw7votSUvDDmN2A8
+
+Content-Type: application/json
+{
+   student:
+        {
+            email: 'abebehailu@student.com'
+        }
+}
+```
+
+After registering student now we can create a course for the student
+
+```
+POST http://localhost:5000/admin/course/student
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MDU3MTZmMTAwZWU2YWU1OWIyODZhNiIsImVtYWlsIjoidGVzdEVtYWlsIiwibmFtZSI6InRlc3RBZG1pbiIsInR5cGUiOiJhZG1pbiIsImlhdCI6MTcxMTYzMzA5NCwiZXhwIjoxNzExNjM0ODk0fQ.IgeDBQ-kYI8oOMtQdgtSVlTCPPspw7votSUvDDmN2A8
+
+Content-Type: application/json
+
+{
+  student: {
+    instructor: "Yonas Amsalu",
+    email: "abebehailu@student.com",
+    name: "Object Oriented Programming",
+    credit: 4,
+    batch: "4th b",
+    semister: 2
+  }
+}
+
+```
+Then the response will be
+
+```
+{
+  "_id": "660586927aace7f8ce39327a",
+  "name": "abebe behailu",
+  "email": "abebehailu@student.com",
+  "password": "*****",
+  "age": 18,
+  "phone": "0978253416",
+  "type": "student",
+  "dept": "Software Engineering",
+  "batch": "4th year b",
+  "StudentID": "ETS0123/16",
+  "registered": true,
+  "courses": [
+    {
+      "instructor": "Yonas Amsalu",
+      "name": "Object Oriented Programming",
+      "credit": 4,
+      "year": "2024",
+      "semister": 2,
+      "grade": "-",
+      "status": "taking",
+      "_id": "6605a3557aace7f8ce393292"
+    }
+  ],
+  "requests": [
+    
+  ],
+  "recieved": [
+    
+  ],
+  "responses": [
+    
+  ],
+  "droppedCourses": [
+    
+  ],
+  "addCourses": [
+    
+  ],
+  "createdAt": "2024-03-28T15:02:42.878Z",
+  "updatedAt": "2024-03-28T17:05:25.251Z"
+}
+```
+And also if we see the instructors data
+
+```
+{
+    _id: ObjectId('66059d1c7aace7f8ce393282'),
+    name: 'Yonas Amsalu',
+    email: 'yonas@student.com',
+    password: '$2b$10$2Z/WpuxS9WTr4WCSRFr6a.aEbzOlMMDbuC6lrPHuYLoF5YW8hqwPq',
+    age: 32,
+    phone: '094637281234',
+    type: 'instructor',
+    dept: 'Software Engineering',
+    qualification: 'Masters in Software Design',
+    coursesAssigned: [
+      {
+        name: 'Object Oriented Programming',
+        credit: 4,
+        numberClass: 1,
+        year: '2024',
+        semister: 2,
+        batch: '4th b',
+        _id: ObjectId('6605ac3016619e430d70f3b6')
+      }
+    ],
+    requests: [],
+    recieved: [],
+    responses: [],
+    assignedStudents: [
+      {
+        course: 'Object Oriented Programming',
+        credit: 4,
+        StudentID: 'ETS0123/16',
+        grade: '-',
+        attendance: 0,
+        batch: '4th b',
+        semister: 2,
+        year: '2024',
+        add: false,
+        _id: ObjectId('6605ac3016619e430d70f3b9')
+      }
+    ],
+    createdAt: ISODate('2024-03-28T16:38:52.904Z'),
+    updatedAt: ISODate('2024-03-28T17:43:12.662Z')
+  }
+```
+
+Now student abebe can make a request to the instructor
+keep in mind that authorization header is for student 
+
+```
+POST http://localhost:5000/student/issue
+Autherization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MDU4NjkyN2FhY2U3ZjhjZTM5MzI3YSIsImVtYWlsIjoiYWJlYmVoYWlsdUBzdHVkZW50LmNvbSIsIlN0dWRlbnRJRCI6IkVUUzAxMjMvMTYiLCJ0eXBlIjoic3R1ZGVudCIsImlhdCI6MTcxMTY1MDUyMCwiZXhwIjoxNzExNjU3NzIwfQ.Y5dmRdIY-W6sx6UYnpJJmESxLb3HTgrNSceugu9sWRo
+
+Content-Type: application/json
+{
+  student: {
+    title: "requesting additional class to grasp the concept of inheritance",
+    email: "abebehailu@student.com",
+    body: "Mr.Yonas I would like to ask u to schedule an additional class to breifly understand the fundamental concept of OOP",
+    info: {
+      reciever: "66059d1c7aace7f8ce393282",
+      sender: "660586927aace7f8ce39327a"
+    }
+  }
+}
+```
+
+then we can see separate request object created in requests collection, 
+request id added in the student and also recieved object of the instructor is appended with id.
+
+```
+[
+  {
+    _id: ObjectId('6605b8f5e6b219cd880e3309'),
+    requests: {
+      title: 'requesting additional class to grasp the concept of inheritance',
+      body: 'Mr.Yonas I would like to ask u to schedule an additional class to breifly understand the fundamental concept of OOP',
+      info: {
+        sender: ObjectId('660586927aace7f8ce39327a'),
+        reciever: ObjectId('66059d1c7aace7f8ce393282')
+      },
+      issueDate: ISODate('2024-03-28T18:37:41.465Z'),
+      response: {
+        message: null,
+        responseDate: ISODate('2024-03-28T18:37:41.465Z')
+      }
+    },
+    __v: 0
+  }
+],
+{
+    _id: ObjectId('66059d1c7aace7f8ce393282'),
+    name: 'Yonas Amsalu',
+    email: 'yonas@student.com',
+    password: '$2b$10$2Z/WpuxS9WTr4WCSRFr6a.aEbzOlMMDbuC6lrPHuYLoF5YW8hqwPq',
+    age: 32,
+    phone: '094637281234',
+    type: 'instructor',
+    dept: 'Software Engineering',
+    qualification: 'Masters in Software Design',
+    coursesAssigned: [
+      {
+        name: 'Object Oriented Programming',
+        credit: 4,
+        numberClass: 1,
+        year: '2024',
+        semister: 2,
+        batch: '4th b',
+        _id: ObjectId('6605ac3016619e430d70f3b6')
+      }
+    ],
+    requests: [],
+    recieved: [
+      {
+        id: ObjectId('6605b8f5e6b219cd880e3309'),
+        sender: ObjectId('660586927aace7f8ce39327a'),
+        _id: ObjectId('6605b8f54bbf309cfaecff10')
+      }
+    ],
+    responses: [],
+    assignedStudents: [
+      {
+        course: 'Object Oriented Programming',
+        credit: 4,
+        StudentID: 'ETS0123/16',
+        grade: '-',
+        attendance: 0,
+        batch: '4th b',
+        semister: 2,
+        year: '2024',
+        add: false,
+        _id: ObjectId('6605ac3016619e430d70f3b9')
+      }
+    ],
+    createdAt: ISODate('2024-03-28T16:38:52.904Z'),
+    updatedAt: ISODate('2024-03-28T18:37:41.501Z')
+  }
+```
+
+Notice that in the instructor recieved object the id property is the _id of the request object.
+
+When instructor responds
+
+```
+POST http://localhost:5000/instructor/resolve
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MDU5ZDFjN2FhY2U3ZjhjZTM5MzI4MiIsImVtYWlsIjoieW9uYXNAc3R1ZGVudC5jb20iLCJ0eXBlIjoiaW5zdHJ1Y3RvciIsImlhdCI6MTcxMTY1MTY0OSwiZXhwIjoxNzExNjU1MjQ5fQ.wvskdD7RTV3IhjCRyptaXC7wT3ACIuY7qcY1AuuGf1k
+
+Content-Type: application/json
+
+{
+  instructor: {
+    email: "yonas@student.com",
+    body: "I will be very happy to schedule in next week notify others who wanna join",
+    info: {
+      sender: "66059d1c7aace7f8ce393282",
+      id: "6605b8f5e6b219cd880e3309"
+    }
+  }
+}
+
+```
+
+then we can see the response of the request and also instructor
+
+```
+[
+  {
+    _id: ObjectId('6605b8f5e6b219cd880e3309'),
+    requests: {
+      title: 'requesting additional class to grasp the concept of inheritance',
+      body: 'Mr.Yonas I would like to ask u to schedule an additional class to breifly understand the fundamental concept of OOP',
+      info: {
+        sender: ObjectId('660586927aace7f8ce39327a'),
+        reciever: ObjectId('66059d1c7aace7f8ce393282')
+      },
+      issueDate: ISODate('2024-03-28T18:37:41.465Z'),
+      response: {
+        message: 'I will be very happy to schedule in next week notify others who wanna join',
+        responseDate: ISODate('2024-03-28T18:37:41.465Z')
+      }
+    },
+    __v: 0
+  }
+]
+{
+    _id: ObjectId('66059d1c7aace7f8ce393282'),
+    name: 'Yonas Amsalu',
+    email: 'yonas@student.com',
+    password: '$2b$10$2Z/WpuxS9WTr4WCSRFr6a.aEbzOlMMDbuC6lrPHuYLoF5YW8hqwPq',
+    age: 32,
+    phone: '094637281234',
+    type: 'instructor',
+    dept: 'Software Engineering',
+    qualification: 'Masters in Software Design',
+    coursesAssigned: [
+      {
+        name: 'Object Oriented Programming',
+        credit: 4,
+        numberClass: 1,
+        year: '2024',
+        semister: 2,
+        batch: '4th b',
+        _id: ObjectId('6605ac3016619e430d70f3b6')
+      }
+    ],
+    requests: [],
+    recieved: [
+      {
+        id: ObjectId('6605b8f5e6b219cd880e3309'),
+        sender: ObjectId('660586927aace7f8ce39327a'),
+        _id: ObjectId('6605b8f54bbf309cfaecff10')
+      }
+    ],
+    responses: [
+      {
+        info: {
+          id: ObjectId('6605b8f5e6b219cd880e3309'),
+          sender: ObjectId('66059d1c7aace7f8ce393282')
+        },
+        body: 'I will be very happy to schedule in next week notify others who wanna join',
+        _id: ObjectId('6605bc674bbf309cfaecff1b'),
+        responseDate: ISODate('2024-03-28T18:52:23.521Z')
+      }
+    ],
+    assignedStudents: [
+      {
+        course: 'Object Oriented Programming',
+        credit: 4,
+        StudentID: 'ETS0123/16',
+        grade: '-',
+        attendance: 0,
+        batch: '4th b',
+        semister: 2,
+        year: '2024',
+        add: false,
+        _id: ObjectId('6605ac3016619e430d70f3b9')
+      }
+    ],
+    createdAt: ISODate('2024-03-28T16:38:52.904Z'),
+    updatedAt: ISODate('2024-03-28T18:52:23.518Z'),
+    __v: 0
+  }
+```
+
+All request and response are processed in Bull therefore if for some reason bull processor is down once its up start processing from where it stopped given that when the endpoint requested added the process the queue.

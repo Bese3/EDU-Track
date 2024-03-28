@@ -9,12 +9,12 @@
 ###
 
  http://localhost:5000/instructor/login
- Authorization: Basic YmVzdWZrYWQueWlsbWFAYWFzdHVzdHVkZW50LmVkdS5ldDpTdGRiZHR5aDIh
+ Authorization: Basic eW9uYXNAc3R1ZGVudC5jb206eW9uYXMxMjM0
 
 ###
 
  http://localhost:5000/student/login
- Authorization: Basic YmVzZUBnbWFpbC5jb206U3RkYmR0eWgyIQ==
+ Authorization: Basic YWJlYmVoYWlsdUBzdHVkZW50LmNvbTphYmUxMjM0
 
 ###
 http://localhost:5000/logout
@@ -28,7 +28,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmRhZjQ3Y
 ###
 
 http://localhost:/500/admin/registerStudent
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmIzOGU1YzVkMmM0MzE4Yzg3YjM0MCIsImVtYWlsIjoiYmVzdWZrYWQueWlsbWFAYWFzdHVzdHVkZW50LmVkdS5ldCIsIm5hbWUiOiJCZXN1ZmthZCBZaWxtYSIsInR5cGUiOiJhZG1pbiIsImlhdCI6MTcxMTAwODQ3NiwiZXhwIjoxNzExMDEwMjc2fQ.EgBjNzuaroH_Gdnc_VWgo2wdXmRvDxC3YfRGCPEarrY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MDU3MTZmMTAwZWU2YWU1OWIyODZhNiIsImVtYWlsIjoidGVzdEVtYWlsIiwibmFtZSI6InRlc3RBZG1pbiIsInR5cGUiOiJhZG1pbiIsImlhdCI6MTcxMTYzNTA2NywiZXhwIjoxNzExNjM2ODY3fQ.pdCyCBuKmCAc8_rlJHu9hFtqx3rlDKMd9iyRuNz-b7E
 Content-Type: application/json
 {
     "student": {
@@ -45,7 +45,25 @@ Content-Type: application/json
     }
 }
 
+###
+
+POST /admin/create/student HTTP/1.1
+Host: localhost:5000
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MDU3MTZmMTAwZWU2YWU1OWIyODZhNiIsImVtYWlsIjoidGVzdEVtYWlsIiwibmFtZSI6InRlc3RBZG1pbiIsInR5cGUiOiJhZG1pbiIsImlhdCI6MTcxMTYzNjg4MSwiZXhwIjoxNzExNjM4NjgxfQ.s_ZIwVefXA_QrIaav_zGw9z7kWmfgaar5OZCvD-K3xE
+Content-Type: application/json
+{
+    "name": "abebe behailu",
+    "email": "abebehailu@student.com",
+    "password": "abe1234",
+    "age": 18,
+    "phone": "0978253416",
+    "type": "student",
+    "dept": "Software Engineering",
+    "batch": "4th year b",
+    "StudentID": "ETS0123/16"
+}
+
 
 ###
 
-#  curl -XPOST http://localhost:5000/admin/create/student -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmIzOGU1YzVkMmM0MzE4Yzg3YjM0MCIsImVtYWlsIjoiYmVzdWZrYWQueWlsbWFAYWFzdHVzdHVkZW50LmVkdS5ldCIsIm5hbWUiOiJCZXN1ZmthZCBZaWxtYSIsInR5cGUiOiJhZG1pbiIsImlhdCI6MTcxMTExNTQzNiwiZXhwIjoxNzExMTE3MjM2fQ.k6VqwGcxonnCFu-6_A503B5ff2Jt-X3tDIDJnbRhmkI" -H "Content-Type: application/json" -d '{"student": {"email": "bese@gmail.com", "name": "Besufikad Yilma", "dept": "Electrical & Computer Engineering", "batch": "2016 graduate", "StudentID": "ETS0123/12", "registered": true, "password": "password21", "age": 19, "phone": 0, "type": "student"}}' -v
+#  curl -XPOST http://localhost:5000/admin/create/student -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmIzOGU1YzVkMmM0MzE4Yzg3YjM0MCIsImVtYWlsIjoiYmVzdWZrYWQueWlsbWFAYWFzdHVzdHVkZW50LmVkdS5ldCIsIm5hbWUiOiJCZXN1ZmthZCBZaWxtYSIsInR5cGUiOiJhZG1pbiIsImlhdCI6MTcxMTExNTQzNiwiZXhwIjoxNzExMTE3MjM2fQ.k6VqwGcxonnCFu-6_A503B5ff2Jt-X3tDIDJnbRhmkI" -H "Content-Type: application/json" -d "{"student": {"email": "bese@gmail.com", "name": "Besufikad Yilma", "dept": "Electrical & Computer Engineering", "batch": "2016 graduate", "StudentID": "ETS0123/12", "registered": true, "password": "password21", "age": 19, "phone": 0, "type": "student"}}" -v
