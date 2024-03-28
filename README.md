@@ -76,10 +76,82 @@ password: testpwd
 npm run create-admin
 ```
 
-First we login as an admin with Autherization header 
+First we login as an admin with Authorization header 
 
 ```
 http://localhost:5000/admin/login
 Autherization: Basic dGVzdEVtYWlsOnRlc3Rwd2Q=
 ```
 ![Response](https://github.com/Bese3/EDU-Track/blob/main/adminLoginResponse.png)
+
+If our credintials are right we get a set-cookie named token with a JWT payload, It is important to remember JWT of an admin expires in 30 min.
+
+Now for the purpose of showcasing we create two student and instructor
+Important fields when creating student
++ name
++ email
++ password for the student
++ age (type integer)
++ phone (stored as a string)
++ type can only be a student, admin or instructor
++ dept  deparment of the student
++ batch 
++ StudentID
+
+and it must be in student object
+
+```
+http://localhost:5000/admin/create/student
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MDU3MTZmMTAwZWU2YWU1OWIyODZhNiIsImVtYWlsIjoidGVzdEVtYWlsIiwibmFtZSI6InRlc3RBZG1pbiIsInR5cGUiOiJhZG1pbiIsImlhdCI6MTcxMTYzMzA5NCwiZXhwIjoxNzExNjM0ODk0fQ.IgeDBQ-kYI8oOMtQdgtSVlTCPPspw7votSUvDDmN2A8
+Content-Type: application/json
+{
+    name: 'abebe behailu',
+    email: 'abebehailu@student.com',
+    password: 'abe1234',
+    age: 18,
+    phone: '0978253416',
+    type: 'student',
+    dept: 'Software Engineering',
+    batch: '4th year b',
+    StudentID: 'ETS0123/16'
+}
+```
+
+We get a response from database
+
+```
+{
+  "name": "abebe behailu",
+  "email": "abebehailu@student.com",
+  "password": "*****",
+  "age": 18,
+  "phone": "0978253416",
+  "type": "student",
+  "_id": "660586927aace7f8ce39327a",
+  "dept": "Software Engineering",
+  "batch": "4th year b",
+  "StudentID": "ETS0123/16",
+  "registered": false,
+  "courses": [
+    
+  ],
+  "requests": [
+    
+  ],
+  "recieved": [
+    
+  ],
+  "responses": [
+    
+  ],
+  "droppedCourses": [
+    
+  ],
+  "addCourses": [
+    
+  ],
+  "createdAt": "2024-03-28T15:02:42.878Z",
+  "updatedAt": "2024-03-28T15:02:42.878Z",
+  "__v": 0
+}
+```
