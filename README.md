@@ -63,3 +63,23 @@ On different terminal
 ```
 npm run start-worker
 ```
+
+Create test admin for the requests you can change the data in the testAdmin file remember to hash the password before storing it.
+
+```
+Name: testAdmin
+Email: testEmail
+password: testpwd
+```
+
+```
+npm run create-admin
+```
+
+First we login as an admin with Autherization header 
+
+```
+http://localhost:5000/admin/login
+Autherization: Basic dGVzdEVtYWlsOnRlc3Rwd2Q=
+```
+![Response](https://imgur.com/fltrFiP)

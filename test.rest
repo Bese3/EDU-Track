@@ -4,7 +4,7 @@
 ###
 
  http://localhost:5000/admin/login
- Authorization: Basic YmVzdWZrYWQueWlsbWFAYWFzdHVzdHVkZW50LmVkdS5ldDpTdGRiZHR5aDIh
+ Authorization: Basic dGVzdEVtYWlsOnRlc3Rwd2Q=
 
 ###
 

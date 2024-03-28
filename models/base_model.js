@@ -31,12 +31,13 @@ export default class BaseModel {
                 required: true
             },
             phone: {
-                type: Number,
+                type: String,
                 required: true
             },
             type: {
                 type: String,
-                required: true
+                required: true,
+                enum: ['admin', 'student', 'instructor']
             }
         }, { timestamps: true });
 

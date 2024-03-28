@@ -1,3 +1,4 @@
+/* eslint-disable */
 import dbClient from "../utils/db.js";
 import pwdHash from "../utils/pwd.js";
 import jwt from "jsonwebtoken";
@@ -5,12 +6,14 @@ import Admins from "../models/admin.js";
 import Instructors from "../models/instructors.js";
 import Students from "../models/student.js";
 import makeRqst from "../models/makeRqst.js";
+import AdminController from "./AdminController.js";
 
 let testemail = 'email'
 let admin = new Admins({testemail});
 let instructor = new Instructors({testemail});
 let student = new Students({testemail});
 let reqst = new makeRqst({requests: testemail});
+let Admin = new AdminController({testemail});
 
 
 export default class AuthController {
@@ -24,6 +27,10 @@ export default class AuthController {
 
     static reqmodel() {
         return reqst
+    }
+
+    static admModel() {
+        return Admin
     }
 
     static async studGetConnect (req, res, next) {
