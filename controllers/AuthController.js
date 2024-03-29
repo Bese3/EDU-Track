@@ -14,6 +14,7 @@ let instructor = new Instructors({testemail});
 let student = new Students({testemail});
 let reqst = new makeRqst({requests: testemail});
 let Admin = new AdminController({testemail});
+let redactionString = '*****'
 
 
 export default class AuthController {
@@ -33,7 +34,7 @@ export default class AuthController {
         return Admin
     }
 
-    static async studGetConnect (req, res, next) {
+    static async studGetConnect (req, res) {
         if (!req.headers['authorization']) {
             return res.status(401).json({'error': 'Unauthorized'});
         }
@@ -54,7 +55,7 @@ export default class AuthController {
             const token = jwt.sign(payload, secKey, {expiresIn: '2h'});
             res.cookie('token', token);
             // req.body = Object.assign({}, req.body, result);
-            result['password'] = "*****"
+            result = pwdHash.filter(result._doc, ['password'], redactionString)
             res.status(200).json(result)
         } else {
             return res.status(403).json({'error': 'Incorrect Password'});
@@ -103,7 +104,7 @@ export default class AuthController {
             const token = jwt.sign(payload, secKey, {expiresIn: '1h'});
             res.cookie('token', token);
             // req.body = Object.assign({}, req.body, result);
-            result['password'] = "*****"
+            result = pwdHash.filter(result._doc, ['password'], redactionString)
             res.status(200).json(result)
         } else {
             return res.status(403).json({'error': 'Forbidden'});
@@ -131,7 +132,7 @@ export default class AuthController {
             const token = jwt.sign(payload, secKey, {expiresIn: '30m'});
             res.cookie('token', token);
             // req.body = Object.assign({}, req.body, result);
-            result['password'] = "*****"
+            result = pwdHash.filter(result._doc, ['password'], redactionString)
             res.status(200).json(result)
         } else {
             return res.status(403).json({'error': 'email or password didn\'t match'});

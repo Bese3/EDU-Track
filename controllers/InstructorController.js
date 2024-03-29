@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 const REDIS_URL = process.env.REDIS_URL || "redis://127.0.0.1:6379";
 const requestQueue = new Bull('instrequestQueue', REDIS_URL);
 const responseQueue = new Bull('instresponseQueue', REDIS_URL);
+let redactionString = '*****';
 
 
 export default class InstructorController {
@@ -32,7 +33,7 @@ export default class InstructorController {
             console.log(err)
             return res.status(400).json({'error': 'Instructor data not specified'});
         }
-        result.password = "*****"
+        result = pwdHash.filter(result._doc, ['password'], redactionString)
         return res.status(201).json(result);
     }
 
@@ -50,7 +51,7 @@ export default class InstructorController {
         }
         let qualification = req.body.instructor.qualification;
         result = await AuthController.instmodel().updateDoc({email}, {qualification}, 'instructors');
-        result.password = "*****"
+        result = pwdHash.filter(result._doc, ['password'], redactionString)
         res.status(200).json(result)
     }
 

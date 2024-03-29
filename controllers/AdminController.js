@@ -1,5 +1,9 @@
 /* eslint-disable */
 import Admins from "../models/admin.js";
+import pwdHash from "../utils/pwd.js";
+
+let redactionString = '*****';
+
 
 export default class AdminController {
     static async creatAdmin(req, res) {
@@ -18,7 +22,7 @@ export default class AdminController {
             req.body.admin.password = await pwdHash.generateHash(req.body.admin.password);
             let admin = new Admins(req.body.admin);
             result = await admin.save(admin.adminsModel);
-            result.password = "*****"
+            result = pwdHash.filter(result._doc, ['password'], redactionString)
             return res.status(201).json(result);
         } catch(err) {
             return res.status(400).json({'error': 'admin data not specified'});

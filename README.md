@@ -597,4 +597,4 @@ then we can see the response of the request and also instructor
   }
 ```
 
-All request and response are processed in Bull therefore if for some reason bull processor is down once its up start processing from where it stopped given that when the endpoint requested added the process the queue.
+All request and response are processed in Bull. therefore if for some reason bull processor is down once its up start processing from where it stopped given that when the endpoint requested added the process the queue.

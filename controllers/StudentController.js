@@ -9,6 +9,7 @@ import Bull from 'bull';
 const REDIS_URL = process.env.REDIS_URL || "redis://127.0.0.1:6379";
 const requestQueue = new Bull('studrequestQueue', REDIS_URL);
 const responseQueue = new Bull('studresponseQueue', REDIS_URL);
+let redactionString = '*****';
 
 
 export default class StudentController {
@@ -28,7 +29,7 @@ export default class StudentController {
             req.body.student.password = await pwdHash.generateHash(req.body.student.password);
             let stud = new Students(req.body.student);
             result = await stud.save(stud.studentModel);
-            result.password = "*****"
+            result = pwdHash.filter(result._doc, ['password'], redactionString)
             return res.status(201).json(result);
         } catch(err) {
             return res.status(400).json({'error': 'student data not specified'});
@@ -53,7 +54,7 @@ export default class StudentController {
         }
         const upDoc = {registered: true};
         result = await AuthController.stumodel().updateDoc({email}, upDoc, 'students');
-        result.password = "*****"
+        result = pwdHash.filter(result._doc, ['password'], redactionString)
         return res.status(200).json(result);
     }
 
@@ -75,7 +76,7 @@ export default class StudentController {
         }
         const upDoc = {registered: false};
         result = await AuthController.stumodel().updateDoc({email}, upDoc, 'students');
-        result.password = "*****"
+        result = pwdHash.filter(result._doc, ['password'], redactionString)
         return res.status(200).json(result);
     }
 
@@ -95,7 +96,7 @@ export default class StudentController {
 
         const upDoc = {dept: req.body.student.dept};
         result = await AuthController.stumodel().updateDoc({email}, upDoc, 'students');
-        result.password = "*****"
+        result = pwdHash.filter(result._doc, ['password'], redactionString)
         return res.status(200).json(result);
     }
 
@@ -115,7 +116,7 @@ export default class StudentController {
         }
         const upDoc = {batch: req.body.student.batch};
         result = await AuthController.stumodel().updateDoc({email}, upDoc, 'students');
-        result.password = "*****"
+        result = pwdHash.filter(result._doc, ['password'], redactionString)
         return res.status(200).json(result);
     }
 
@@ -241,7 +242,7 @@ export default class StudentController {
                 
             }
         }
-        result.password = "*****"
+        result = pwdHash.filter(result._doc, ['password'], redactionString)
         return res.status(200).json(result);
     }
 
@@ -383,7 +384,7 @@ export default class StudentController {
             }
         }
 
-        result.password = "*****";
+        result = pwdHash.filter(result._doc, ['password'], redactionString)
         return res.status(200).json(result)
     }
 
@@ -422,7 +423,7 @@ export default class StudentController {
             if (course.name == name && course.instructor == instructor && course.status == 'taking') {
                 course.grade = grade
                 result = await AuthController.stumodel().studentModel.model('students').findOneAndUpdate({email, 'courses.name': course.name}, {$set: {'courses.$': course}}, {returnDocument: 'after'});
-                result.password = "*****";
+                result = pwdHash.filter(result._doc, ['password'], redactionString)
                 return res.status(200).json(result)
             }
         }
@@ -466,7 +467,7 @@ export default class StudentController {
             if (course.name == name && course.instructor == instructor && course.status == 'taking') {
                 course.attendance = attendance
                 result = await AuthController.stumodel().studentModel.model('students').findOneAndUpdate({email, 'courses.name': course.name}, {$set: {'courses.$': course}}, {returnDocument: 'after'});
-                result.password = "*****";
+                result = pwdHash.filter(result._doc, ['password'], redactionString)
                 return res.status(200).json(result)
             }
         }
